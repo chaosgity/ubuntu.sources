@@ -1,0 +1,43 @@
+cat > /mnt/etc/zfsbootmenu/config.yaml <<EOF
+Global:
+  # Essential: Allows generate-zbm to create images
+  ManageImages: true
+  # Mount point for your EFI System Partition (ESP)
+  BootMountPoint: /boot/efi
+  #BootMountPoint: /efi
+  # Directories for dracut hooks if custom decryption logic is needed
+  DracutConfDir: /etc/zfsbootmenu/dracut.conf.d
+  PreHooksDir: /etc/zfsbootmenu/generate-zbm.pre.d
+  PostHooksDir: /etc/zfsbootmenu/generate-zbm.post.d
+  # Use initramfs-tools or mkinitcpio depending on your distro
+  InitCPIO: false
+  InitCPIOConfig: /etc/zfsbootmenu/mkinitcpio.conf
+
+Components:
+  # Disable legacy bootloader components if using pure UEFI
+  ImageDir: /boot/efi/EFI/zbm
+  Versions: 3
+  # Disable separate kernel/initramfs components if making a UKI
+  Enabled: false
+  syslinux:
+    Config: /boot/syslinux/syslinux.cfg
+    Enabled: false
+EFI:
+  # Output directory for the UKI (VMLINUZ.EFI)
+  ImageDir: /boot/efi/EFI/zbm
+  #ImageDir: /efi/EFI/ZBM
+  # Set to false to overwrite the same file name (simplifies EFI boot entry)
+  # Set to true if you want to keep historical versions automatically
+  # Important: Prevents adding version numbers to the filename
+  Versions: false
+  Enabled: true
+  # Optional: Specify a splash image
+  # SplashImage: /etc/zfsbootmenu/splash.bmp
+
+Kernel:
+  # 'ro' is standard; 'quiet' reduces noise. 
+  # loglevel=4 is useful for debugging boot issues without being too verbose; loglevel=0 responds to no verbosity
+  CommandLine: ro quiet loglevel=0 zbm.import_policy=hostid
+  # Forces the output to be named vmlinuz.EFI
+  Prefix: vmlinuz
+EOF
